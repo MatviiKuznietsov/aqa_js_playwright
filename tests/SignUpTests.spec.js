@@ -1,6 +1,6 @@
 import {expect, test} from "@playwright/test";
 import {RegistrationPage} from "../pages/RegistrationPage.js";
-import {MainPage} from "../pages/MainPage.js";
+import {GaragePage} from "../pages/GaragePage.ts";
 import {User} from "../entitys/User.js";
 
 let regPage
@@ -39,16 +39,15 @@ test.describe('Registration user', () => {
     test.beforeEach('Preparation', async ({page}) => {
         await page.goto("")
         regPage = new RegistrationPage(page)
-        mainPage = new MainPage(page)
+        mainPage = new GaragePage(page)
     })
     test.afterEach('After test actions', async ({page}) => {
-        page.url() === URL_MAIN_PAGE ? await mainPage.removeUser() : null;
+        await mainPage.removeUser()
     })
     test('Check successful registration user', async ({page}) => {
         await regPage.signUpUser(user)
         await expect(page).toHaveURL(URL_MAIN_PAGE)
         await expect(page).toHaveTitle(TITLE)
-
     })
 })
 test.describe('Negative sign up tests', () => {
@@ -57,71 +56,85 @@ test.describe('Negative sign up tests', () => {
         regPage = new RegistrationPage(page)
     })
     test("Check validation on empty field name", async () => {
+        await regPage.clickBtnSignUp()
         await regPage.fillFieldName(EMPTY_DATA)
         await expect(regPage.invalidNameMsg.last()).toContainText(MSG_EMPTY_NAME)
         await expect(regPage.inputName).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation on invalid data in field name", async () => {
+        await regPage.clickBtnSignUp()
         await regPage.fillFieldName(SPECIAL_SYMBOLS)
         await expect(regPage.invalidNameMsg).toContainText(MSG_INVALID_NAME)
         await expect(regPage.inputName).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation on over 20 symbols in field name", async () => {
+        await regPage.clickBtnSignUp()
         await regPage.fillFieldName(OVER_MAX_SYMBOLS)
         await expect(regPage.invalidNameMsg.last()).toContainText(MSG_OVER_LIMIT_NAME)
         await expect(regPage.inputName).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation less than 2 symbols in field name", async () => {
+        await regPage.clickBtnSignUp()
         await regPage.fillFieldName(LESS_MAX_SYMBOLS)
         await expect(regPage.invalidNameMsg.last()).toContainText(MSG_OVER_LIMIT_NAME)
         await expect(regPage.inputName).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation on empty field last name", async () => {
+        await regPage.clickBtnSignUp()
         await regPage.fillFieldLastName(EMPTY_DATA)
         await expect(regPage.invalidNameMsg.last()).toContainText(MSG_EMPTY_LAST_NAME)
         await expect(regPage.inputLastName).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation on invalid data in field last name", async () => {
+        await regPage.clickBtnSignUp()
         await regPage.fillFieldLastName(SPECIAL_SYMBOLS)
         await expect(regPage.invalidNameMsg).toContainText(MSG_INVALID_LAST_NAME)
         await expect(regPage.inputLastName).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation  on over 20 symbols in field last name", async () => {
+        await regPage.clickBtnSignUp()
         await regPage.fillFieldLastName(OVER_MAX_SYMBOLS)
         await expect(regPage.invalidNameMsg.last()).toContainText(MSG_OVER_LIMIT_LAST_NAME)
         await expect(regPage.inputLastName).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation less than 2 symbols in field last name", async () => {
+        await regPage.clickBtnSignUp()
         await regPage.fillFieldLastName(LESS_MAX_SYMBOLS)
         await expect(regPage.invalidNameMsg.last()).toContainText(MSG_OVER_LIMIT_LAST_NAME)
         await expect(regPage.inputLastName).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation on empty field email", async () => {
+        await regPage.clickBtnSignUp()
         await regPage.fillFieldEmail(EMPTY_DATA)
         await expect(regPage.invalidNameMsg).toContainText(MSG_EMPTY_EMAIL)
         await expect(regPage.inputEmail).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation on invalid data in field email", async () => {
+        await regPage.clickBtnSignUp()
         await regPage.fillFieldEmail(SPECIAL_SYMBOLS)
         await expect(regPage.invalidNameMsg).toContainText(MSG_INVALID_EMAIL)
         await expect(regPage.inputEmail).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation on empty field password", async () => {
+        await regPage.clickBtnSignUp()
         await regPage.fillFieldPass(EMPTY_DATA)
         await expect(regPage.invalidNameMsg).toContainText(MSG_EMPTY_PASS)
         await expect(regPage.inputPassword).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation on invalid data in field password", async () => {
+        await regPage.clickBtnSignUp()
         await regPage.fillFieldPass(SPECIAL_SYMBOLS)
         await expect(regPage.invalidNameMsg).toContainText(MSG_INVALID_PASS)
         await expect(regPage.inputPassword).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation on empty field repeat password", async () => {
+        await regPage.clickBtnSignUp()
         await regPage.fillFieldRepeatPass(EMPTY_DATA)
         await expect(regPage.invalidNameMsg).toContainText(MSG_EMPTY_REPASS)
         await expect(regPage.inputReEnterPassword).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation if password and rename password no match", async () => {
+        await regPage.clickBtnSignUp()
         await regPage.fillFieldPassAndRepeatPass(user.password, user.password + '1')
         await expect(regPage.invalidNameMsg).toContainText(MSG_PASS_NOT_MATCH)
         await expect(regPage.inputReEnterPassword).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)

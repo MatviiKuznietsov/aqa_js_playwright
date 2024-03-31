@@ -53,37 +53,31 @@ export class RegistrationPage {
     }
 
     async fillFieldName(data: string) {
-        await this.clickBtnSignUp()
         await this.inputName.fill(data)
         await this.inputName.blur()
     }
 
     async fillFieldLastName(data: string) {
-        await this.clickBtnSignUp()
         await this.inputLastName.fill(data)
         await this.inputLastName.blur()
     }
 
     async fillFieldEmail(data: string) {
-        await this.clickBtnSignUp()
         await this.inputEmail.fill(data)
         await this.inputEmail.blur()
     }
 
     async fillFieldPass(data: string) {
-        await this.clickBtnSignUp()
         await this.inputPassword.fill(data)
         await this.inputPassword.blur()
     }
 
     async fillFieldRepeatPass(data: string) {
-        await this.clickBtnSignUp()
         await this.inputReEnterPassword.fill(data)
         await this.inputReEnterPassword.blur()
     }
 
     async fillFieldPassAndRepeatPass(dataPass: string, dataRepeatPass: string) {
-        await this.clickBtnSignUp()
         await this.inputPassword.fill(dataPass)
         await this.inputPassword.blur()
         await this.inputReEnterPassword.fill(dataRepeatPass)
