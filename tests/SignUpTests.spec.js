@@ -4,7 +4,7 @@ import {GaragePage} from "../pages/GaragePage.ts";
 import {User} from "../entitys/User.js";
 
 let regPage
-let mainPage
+let garagePage
 const URL_MAIN_PAGE = 'https://qauto.forstudy.space/panel/garage'
 const TITLE = 'Hillel Qauto'
 const ERROR_COLOR = 'rgb(220, 53, 69)'
@@ -39,10 +39,10 @@ test.describe('Registration user', () => {
     test.beforeEach('Preparation', async ({page}) => {
         await page.goto("")
         regPage = new RegistrationPage(page)
-        mainPage = new GaragePage(page)
+        garagePage = new GaragePage(page)
     })
     test.afterEach('After test actions', async () => {
-        await mainPage.removeUser()
+        await garagePage.removeUser()
     })
     test('Check successful registration user', async ({page}) => {
         await regPage.signUpUser(user)
