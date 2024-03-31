@@ -41,7 +41,7 @@ test.describe('Registration user', () => {
         regPage = new RegistrationPage(page)
         mainPage = new GaragePage(page)
     })
-    test.afterEach('After test actions', async ({page}) => {
+    test.afterEach('After test actions', async () => {
         await mainPage.removeUser()
     })
     test('Check successful registration user', async ({page}) => {
