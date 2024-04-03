@@ -1,4 +1,4 @@
-export class DataForTests {
+export class RegistrationFormValidationMessages {
     static readonly MSG_EMPTY_NAME: string = 'Name required'
     static readonly MSG_INVALID_NAME: string = 'Name is invalid'
     static readonly MSG_OVER_LIMIT_NAME: string = 'Name has to be from 2 to 20 characters long'
