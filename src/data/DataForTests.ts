@@ -1,5 +1,4 @@
 export class DataForTests {
-
     static readonly MSG_EMPTY_NAME: string = 'Name required'
     static readonly MSG_INVALID_NAME: string = 'Name is invalid'
     static readonly MSG_OVER_LIMIT_NAME: string = 'Name has to be from 2 to 20 characters long'
@@ -16,8 +15,4 @@ export class DataForTests {
 
     static readonly MSG_EMPTY_REPASS: string = 'Re-enter password required'
     static readonly MSG_PASS_NOT_MATCH: string = 'Passwords do not match'
-
-    constructor() {
-
-    }
 }

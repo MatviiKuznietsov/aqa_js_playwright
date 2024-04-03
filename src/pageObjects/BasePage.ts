@@ -12,5 +12,4 @@ export class BasePage {
     async navigate() {
         await this.page.goto(this.url)
     }
-
 }
