@@ -1,33 +1,15 @@
 import {expect, test} from "@playwright/test";
-import {RegistrationPage} from "../pages/RegistrationPage.js";
-import {GaragePage} from "../pages/GaragePage.ts";
-import {User} from "../entitys/User.js";
+import {User} from "../src/entitys/User.js";
+import {WelcomePage} from "../src/pageObjects/welcomePage/WelcomePage.js";
+import {RegistrationFormValidationMessages} from "../src/data/RegistrationFormValidationMessages.ts";
+import {GaragePage} from "../src/pageObjects/garagePage/GaragePage.js";
 
-let regPage
-let garagePage
+let welcomePage
+
 const URL_MAIN_PAGE = 'https://qauto.forstudy.space/panel/garage'
 const TITLE = 'Hillel Qauto'
 const ERROR_COLOR = 'rgb(220, 53, 69)'
-
-const MSG_EMPTY_NAME = 'Name required'
-const MSG_INVALID_NAME = 'Name is invalid'
-const MSG_OVER_LIMIT_NAME = 'Name has to be from 2 to 20 characters long'
-
-const MSG_EMPTY_LAST_NAME = 'Last name required'
-const MSG_INVALID_LAST_NAME = 'Last name is invalid'
-const MSG_OVER_LIMIT_LAST_NAME = 'Last name has to be from 2 to 20 characters long'
-
-const MSG_EMPTY_EMAIL = 'Email required'
-const MSG_INVALID_EMAIL = 'Email is incorrect'
-
-const MSG_EMPTY_PASS = 'Password required'
-const MSG_INVALID_PASS = 'Password has to be from 8 to 15 characters long and contain at least one integer, one capital, and one small letter'
-
-const MSG_EMPTY_REPASS = 'Re-enter password required'
-const MSG_PASS_NOT_MATCH = 'Passwords do not match'
-
 const CSS_PROPERTY_BORDER_COLOR = 'border-color'
-
 const EMPTY_DATA = ''
 const SPECIAL_SYMBOLS = '###'
 const OVER_MAX_SYMBOLS = 'qwertqwertqwertqwert2'
@@ -37,116 +19,102 @@ const user = new User('Jou', 'Dou', 'JouDou@mailto.plus', 'Password1Q')
 
 test.describe('Registration user', () => {
     test.beforeEach('Preparation', async ({page}) => {
-        await page.goto("")
-        regPage = new RegistrationPage(page)
-        garagePage = new GaragePage(page)
+        welcomePage = new WelcomePage(page)
+        await welcomePage.navigate()
     })
-    test.afterEach('After test actions', async () => {
+    test.afterEach('After test actions', async ({page}) => {
+        const garagePage = new GaragePage(page)
         await garagePage.removeUser()
     })
     test('Check successful registration user', async ({page}) => {
-        await regPage.signUpUser(user)
+        //  await regPage.signUpUser(user)
+        await (await welcomePage.openSignUpPopUp()).signUpUser(user)
         await expect(page).toHaveURL(URL_MAIN_PAGE)
         await expect(page).toHaveTitle(TITLE)
     })
 })
 test.describe('Negative sign up tests', () => {
     test.beforeEach('Preparation', async ({page}) => {
-        await page.goto("")
-        regPage = new RegistrationPage(page)
+        welcomePage = new WelcomePage(page)
+        await welcomePage.navigate()
     })
     test("Check validation on empty field name", async () => {
-        await regPage.clickBtnSignUp()
-        await regPage.fillFieldName(EMPTY_DATA)
-        await expect(regPage.invalidNameMsg.last()).toContainText(MSG_EMPTY_NAME)
-        await expect(regPage.inputName).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
+        await (await welcomePage.openSignUpPopUp()).fillFieldName(EMPTY_DATA)
+        await expect(welcomePage.signUpPopUp.nameInputErrorMessage.last()).toContainText(RegistrationFormValidationMessages.MSG_EMPTY_NAME)
+        await expect(welcomePage.signUpPopUp.inputName).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation on invalid data in field name", async () => {
-        await regPage.clickBtnSignUp()
-        await regPage.fillFieldName(SPECIAL_SYMBOLS)
-        await expect(regPage.invalidNameMsg).toContainText(MSG_INVALID_NAME)
-        await expect(regPage.inputName).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
+        await (await welcomePage.openSignUpPopUp()).fillFieldName(SPECIAL_SYMBOLS)
+        await expect(welcomePage.signUpPopUp.nameInputErrorMessage).toContainText(RegistrationFormValidationMessages.MSG_INVALID_NAME)
+        await expect(welcomePage.signUpPopUp.inputName).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation on over 20 symbols in field name", async () => {
-        await regPage.clickBtnSignUp()
-        await regPage.fillFieldName(OVER_MAX_SYMBOLS)
-        await expect(regPage.invalidNameMsg.last()).toContainText(MSG_OVER_LIMIT_NAME)
-        await expect(regPage.inputName).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
+        await (await welcomePage.openSignUpPopUp()).fillFieldName(OVER_MAX_SYMBOLS)
+        await expect(welcomePage.signUpPopUp.nameInputErrorMessage.last()).toContainText(RegistrationFormValidationMessages.MSG_OVER_LIMIT_NAME)
+        await expect(welcomePage.signUpPopUp.inputName).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation less than 2 symbols in field name", async () => {
-        await regPage.clickBtnSignUp()
-        await regPage.fillFieldName(LESS_MAX_SYMBOLS)
-        await expect(regPage.invalidNameMsg.last()).toContainText(MSG_OVER_LIMIT_NAME)
-        await expect(regPage.inputName).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
+        await (await welcomePage.openSignUpPopUp()).fillFieldName(LESS_MAX_SYMBOLS)
+        await expect(welcomePage.signUpPopUp.nameInputErrorMessage.last()).toContainText(RegistrationFormValidationMessages.MSG_OVER_LIMIT_NAME)
+        await expect(welcomePage.signUpPopUp.inputName).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation on empty field last name", async () => {
-        await regPage.clickBtnSignUp()
-        await regPage.fillFieldLastName(EMPTY_DATA)
-        await expect(regPage.invalidNameMsg.last()).toContainText(MSG_EMPTY_LAST_NAME)
-        await expect(regPage.inputLastName).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
+        await (await welcomePage.openSignUpPopUp()).fillFieldLastName(EMPTY_DATA)
+        await expect(welcomePage.signUpPopUp.lastNameInputErrorMessage.last()).toContainText(RegistrationFormValidationMessages.MSG_EMPTY_LAST_NAME)
+        await expect(welcomePage.signUpPopUp.inputLastName).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation on invalid data in field last name", async () => {
-        await regPage.clickBtnSignUp()
-        await regPage.fillFieldLastName(SPECIAL_SYMBOLS)
-        await expect(regPage.invalidNameMsg).toContainText(MSG_INVALID_LAST_NAME)
-        await expect(regPage.inputLastName).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
+        await (await welcomePage.openSignUpPopUp()).fillFieldLastName(SPECIAL_SYMBOLS)
+        await expect(welcomePage.signUpPopUp.lastNameInputErrorMessage).toContainText(RegistrationFormValidationMessages.MSG_INVALID_LAST_NAME)
+        await expect(welcomePage.signUpPopUp.inputLastName).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation  on over 20 symbols in field last name", async () => {
-        await regPage.clickBtnSignUp()
-        await regPage.fillFieldLastName(OVER_MAX_SYMBOLS)
-        await expect(regPage.invalidNameMsg.last()).toContainText(MSG_OVER_LIMIT_LAST_NAME)
-        await expect(regPage.inputLastName).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
+        await (await welcomePage.openSignUpPopUp()).fillFieldLastName(OVER_MAX_SYMBOLS)
+        await expect(welcomePage.signUpPopUp.lastNameInputErrorMessage.last()).toContainText(RegistrationFormValidationMessages.MSG_OVER_LIMIT_LAST_NAME)
+        await expect(welcomePage.signUpPopUp.inputLastName).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation less than 2 symbols in field last name", async () => {
-        await regPage.clickBtnSignUp()
-        await regPage.fillFieldLastName(LESS_MAX_SYMBOLS)
-        await expect(regPage.invalidNameMsg.last()).toContainText(MSG_OVER_LIMIT_LAST_NAME)
-        await expect(regPage.inputLastName).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
+        await (await welcomePage.openSignUpPopUp()).fillFieldLastName(LESS_MAX_SYMBOLS)
+        await expect(welcomePage.signUpPopUp.lastNameInputErrorMessage.last()).toContainText(RegistrationFormValidationMessages.MSG_OVER_LIMIT_LAST_NAME)
+        await expect(welcomePage.signUpPopUp.inputLastName).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation on empty field email", async () => {
-        await regPage.clickBtnSignUp()
-        await regPage.fillFieldEmail(EMPTY_DATA)
-        await expect(regPage.invalidNameMsg).toContainText(MSG_EMPTY_EMAIL)
-        await expect(regPage.inputEmail).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
+        await (await welcomePage.openSignUpPopUp()).fillFieldEmail(EMPTY_DATA)
+        await expect(welcomePage.signUpPopUp.emailInputErrorMessage).toContainText(RegistrationFormValidationMessages.MSG_EMPTY_EMAIL)
+        await expect(welcomePage.signUpPopUp.inputEmail).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation on invalid data in field email", async () => {
-        await regPage.clickBtnSignUp()
-        await regPage.fillFieldEmail(SPECIAL_SYMBOLS)
-        await expect(regPage.invalidNameMsg).toContainText(MSG_INVALID_EMAIL)
-        await expect(regPage.inputEmail).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
+        await (await welcomePage.openSignUpPopUp()).fillFieldEmail(SPECIAL_SYMBOLS)
+        await expect(welcomePage.signUpPopUp.emailInputErrorMessage).toContainText(RegistrationFormValidationMessages.MSG_INVALID_EMAIL)
+        await expect(welcomePage.signUpPopUp.inputEmail).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation on empty field password", async () => {
-        await regPage.clickBtnSignUp()
-        await regPage.fillFieldPass(EMPTY_DATA)
-        await expect(regPage.invalidNameMsg).toContainText(MSG_EMPTY_PASS)
-        await expect(regPage.inputPassword).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
+        await (await welcomePage.openSignUpPopUp()).fillFieldPass(EMPTY_DATA)
+        await expect(welcomePage.signUpPopUp.passwordInputErrorMessage).toContainText(RegistrationFormValidationMessages.MSG_EMPTY_PASS)
+        await expect(welcomePage.signUpPopUp.inputPassword).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation on invalid data in field password", async () => {
-        await regPage.clickBtnSignUp()
-        await regPage.fillFieldPass(SPECIAL_SYMBOLS)
-        await expect(regPage.invalidNameMsg).toContainText(MSG_INVALID_PASS)
-        await expect(regPage.inputPassword).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
+        await (await welcomePage.openSignUpPopUp()).fillFieldPass(SPECIAL_SYMBOLS)
+        await expect(welcomePage.signUpPopUp.passwordInputErrorMessage).toContainText(RegistrationFormValidationMessages.MSG_INVALID_PASS)
+        await expect(welcomePage.signUpPopUp.inputPassword).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation on empty field repeat password", async () => {
-        await regPage.clickBtnSignUp()
-        await regPage.fillFieldRepeatPass(EMPTY_DATA)
-        await expect(regPage.invalidNameMsg).toContainText(MSG_EMPTY_REPASS)
-        await expect(regPage.inputReEnterPassword).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
+        await (await welcomePage.openSignUpPopUp()).fillFieldRepeatPass(EMPTY_DATA)
+        await expect(welcomePage.signUpPopUp.reenterPasswordInputErrorMessage).toContainText(RegistrationFormValidationMessages.MSG_EMPTY_REPASS)
+        await expect(welcomePage.signUpPopUp.inputReEnterPassword).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation if password and rename password no match", async () => {
-        await regPage.clickBtnSignUp()
-        await regPage.fillFieldPassAndRepeatPass(user.password, user.password + '1')
-        await expect(regPage.invalidNameMsg).toContainText(MSG_PASS_NOT_MATCH)
-        await expect(regPage.inputReEnterPassword).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
+        await (await welcomePage.openSignUpPopUp()).fillFieldPassAndRepeatPass(user.password, user.password + '1')
+        await expect(welcomePage.signUpPopUp.reenterPasswordInputErrorMessage).toContainText(RegistrationFormValidationMessages.MSG_PASS_NOT_MATCH)
+        await expect(welcomePage.signUpPopUp.inputReEnterPassword).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check cancel sign up", async () => {
-        await regPage.clickBtnSignUp()
-        await regPage.btnRemoveMyAccount.click()
-        await expect(regPage.signUpForm).toBeHidden()
+        await (await welcomePage.openSignUpPopUp()).btnRemoveMyAccount.click()
+        await expect(welcomePage.signUpPopUp.signUpForm).toBeHidden()
     })
     test("Check not active registration button", async () => {
-        await regPage.clickBtnSignUp()
-        await expect(regPage.btnRegister).toHaveAttribute('disabled')
+        await welcomePage.openSignUpPopUp()
+        await expect(welcomePage.signUpPopUp.btnRegister).toBeDisabled()
     })
 })
 

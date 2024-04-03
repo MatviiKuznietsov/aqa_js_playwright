@@ -1,10 +1,10 @@
 import {Locator, Page} from "@playwright/test";
-import {User} from "../entitys/User";
+import {User} from "../../../entitys/User";
+import {BaseComponent} from "../../../components/BaseComponent";
 
-export class RegistrationPage {
+export class SignUpPopUp extends BaseComponent {
     readonly page: Page;
 
-    readonly btnSignUp: Locator;
     readonly btnRegister: Locator;
     readonly btnRemoveMyAccount: Locator;
 
@@ -14,36 +14,41 @@ export class RegistrationPage {
     readonly inputPassword: Locator;
     readonly inputReEnterPassword: Locator;
 
-    readonly invalidNameMsg: Locator;
+    readonly nameInputErrorMessage: Locator;
+    readonly lastNameInputErrorMessage: Locator;
+    readonly emailInputErrorMessage: Locator;
+    readonly passwordInputErrorMessage: Locator;
+    readonly reenterPasswordInputErrorMessage: Locator;
+
     readonly signUpForm: Locator;
 
 
     public constructor(page: Page) {
+        super(page, page.locator('app-signup-modal'));
         this.page = page;
 
-        this.btnSignUp = page.locator('button.hero-descriptor_btn')
-        this.btnRegister = page.locator('div.modal-footer button')
-        this.btnRemoveMyAccount = page.locator('.close')
+        this.btnRegister = this.container.locator('div.modal-footer button')
+        this.btnRemoveMyAccount = this.container.locator('.close')
 
-        this.inputName = page.locator('#signupName')
-        this.inputLastName = page.locator('#signupLastName')
-        this.inputEmail = page.locator('#signupEmail')
-        this.inputPassword = page.locator('#signupPassword')
-        this.inputReEnterPassword = page.locator('#signupRepeatPassword')
+        this.inputName = this.container.locator('#signupName')
+        this.inputLastName = this.container.locator('#signupLastName')
+        this.inputEmail = this.container.locator('#signupEmail')
+        this.inputPassword = this.container.locator('#signupPassword')
+        this.inputReEnterPassword = this.container.locator('#signupRepeatPassword')
 
-        this.invalidNameMsg = page.locator('div.invalid-feedback p')
-        this.signUpForm = page.locator('.modal-content')
-    }
+        this.nameInputErrorMessage = this.inputName.locator('+.invalid-feedback')
+        this.lastNameInputErrorMessage = this.inputLastName.locator('+.invalid-feedback')
+        this.emailInputErrorMessage = this.inputEmail.locator('+.invalid-feedback')
+        this.passwordInputErrorMessage = this.inputPassword.locator('+.invalid-feedback')
+        this.reenterPasswordInputErrorMessage = this.inputReEnterPassword.locator('+.invalid-feedback')
 
-    async clickBtnSignUp() {
-        await this.btnSignUp.click()
+        this.signUpForm = this.container.locator('.modal-content')
     }
 
     async signUpUser(user: User) {
         const time: number = 10
         const prefix: string = 'AQA'
 
-        await this.btnSignUp.click();
         await this.inputName.pressSequentially(user.name, {delay: time})
         await this.inputLastName.pressSequentially(user.lastName, {delay: time})
         await this.inputEmail.pressSequentially(prefix + user.email, {delay: time})
