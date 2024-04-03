@@ -14,7 +14,12 @@ export class SignUpPopUp extends BaseComponent {
     readonly inputPassword: Locator;
     readonly inputReEnterPassword: Locator;
 
-    readonly invalidMsg: Locator;
+    readonly nameInputErrorMessage: Locator;
+    readonly lastNameInputErrorMessage: Locator;
+    readonly emailInputErrorMessage: Locator;
+    readonly passwordInputErrorMessage: Locator;
+    readonly reenterPasswordInputErrorMessage: Locator;
+
     readonly signUpForm: Locator;
 
 
@@ -31,7 +36,12 @@ export class SignUpPopUp extends BaseComponent {
         this.inputPassword = this.container.locator('#signupPassword')
         this.inputReEnterPassword = this.container.locator('#signupRepeatPassword')
 
-        this.invalidMsg = this.container.locator('div.invalid-feedback p')
+        this.nameInputErrorMessage = this.inputName.locator('+.invalid-feedback')
+        this.lastNameInputErrorMessage = this.inputLastName.locator('+.invalid-feedback')
+        this.emailInputErrorMessage = this.inputEmail.locator('+.invalid-feedback')
+        this.passwordInputErrorMessage = this.inputPassword.locator('+.invalid-feedback')
+        this.reenterPasswordInputErrorMessage = this.inputReEnterPassword.locator('+.invalid-feedback')
+
         this.signUpForm = this.container.locator('.modal-content')
     }
 
