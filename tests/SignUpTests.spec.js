@@ -1,8 +1,8 @@
 import {expect, test} from "@playwright/test";
-import {User} from "../src/entitys/User.js";
 import {WelcomePage} from "../src/pageObjects/welcomePage/WelcomePage.js";
 import {RegistrationFormValidationMessages} from "../src/data/RegistrationFormValidationMessages.ts";
 import {GaragePage} from "../src/pageObjects/garagePage/GaragePage.js";
+import {Users} from "../src/data/Users.js";
 
 let welcomePage
 
@@ -15,8 +15,6 @@ const SPECIAL_SYMBOLS = '###'
 const OVER_MAX_SYMBOLS = 'qwertqwertqwertqwert2'
 const LESS_MAX_SYMBOLS = 'a'
 
-const user = new User('Jou', 'Dou', 'JouDou@mailto.plus', 'Password1Q')
-
 test.describe('Registration user', () => {
     test.beforeEach('Preparation', async ({page}) => {
         welcomePage = new WelcomePage(page)
@@ -27,8 +25,7 @@ test.describe('Registration user', () => {
         await garagePage.removeUser()
     })
     test('Check successful registration user', async ({page}) => {
-        //  await regPage.signUpUser(user)
-        await (await welcomePage.openSignUpPopUp()).signUpUser(user)
+        await (await welcomePage.openSignUpPopUp()).signUpUser(Users.userJou)
         await expect(page).toHaveURL(URL_MAIN_PAGE)
         await expect(page).toHaveTitle(TITLE)
     })

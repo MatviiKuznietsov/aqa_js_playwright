@@ -37,19 +37,26 @@ const config = defineConfig({
     /* Configure projects for major browsers */
     projects: [
         {
+            name: 'setup',
+            use: { ...devices['Desktop Chrome'] },
+            testMatch: /tests\/setup\/.*\/*.setup.js/
+        },
+        {
             name: 'chromium',
-            use: {...devices['Desktop Chrome']},
+            use: { ...devices['Desktop Chrome'] },
+            dependencies: ['setup']
         },
 
         {
             name: 'firefox',
             use: {...devices['Desktop Firefox']},
+            dependencies: ['setup']
         },
-
-        {
-            name: 'webkit',
-            use: {...devices['Desktop Safari']},
-        },
+        //
+        // {
+        //     name: 'webkit',
+        //     use: {...devices['Desktop Safari']},
+        // },
 
         /* Test against mobile viewports. */
         // {
