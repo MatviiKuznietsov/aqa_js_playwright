@@ -12,6 +12,5 @@ test.describe("Garage Net tests", () => {
         })
         await userGaragePage.profileNavLink.click()
         await expect(userGaragePage.profileNameLable).toHaveText(`${USER_MOCK_TITLES.data.name} ${USER_MOCK_TITLES.data.lastName}`)
-        await page.pause()
     })
 })
