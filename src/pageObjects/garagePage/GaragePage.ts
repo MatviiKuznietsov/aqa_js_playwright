@@ -9,6 +9,8 @@ export class GaragePage extends BasePage {
     readonly btnRemove: Locator;
     readonly btnAddCar: Locator;
     readonly labelCar: Locator
+    readonly profileNavLink: Locator
+    readonly profileNameLable: Locator
 
     public constructor(page: Page) {
         super(page, "/panel/garage");
@@ -18,6 +20,8 @@ export class GaragePage extends BasePage {
         this.btnRemove = page.locator('.btn-danger')
         this.btnAddCar = page.locator('.panel-page_heading button')
         this.labelCar = page.locator('.car-list li:first-child .car_name.h2')
+        this.profileNavLink = page.locator('a[routerlink=\'profile\']')
+        this.profileNameLable = page.locator('p.profile_name')
     }
 
     async removeUser() {

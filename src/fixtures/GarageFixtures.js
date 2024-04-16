@@ -8,11 +8,15 @@ export const test = base.extend({
         const welcomePage = new WelcomePage(page)
         await use(welcomePage)
     },
-    userGaragePage: async ({browser}, use) => {
+    page: async ({browser}, use) => {
         const ctx = await browser.newContext({
             storageState: USER_TOM_STORAGE_STATE_PATH
         })
         const page = await ctx.newPage()
+        await use(page)
+        await ctx.close()
+    },
+    userGaragePage: async ({page}, use) => {
         const garagePage = new GaragePage(page)
         await garagePage.navigate()
         await use(garagePage)
