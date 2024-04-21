@@ -1,8 +1,8 @@
 import {expect, test} from "@playwright/test";
-import {WelcomePage} from "../src/pageObjects/welcomePage/WelcomePage.js";
-import {RegistrationFormValidationMessages} from "../src/data/RegistrationFormValidationMessages.ts";
-import {GaragePage} from "../src/pageObjects/garagePage/GaragePage.js";
-import {Users} from "../src/data/Users.js";
+import {WelcomePage} from "../../src/pageObjects/welcomePage/WelcomePage.ts";
+import {RegistrationFormValidationMessages} from "../../src/data/RegistrationFormValidationMessages.ts";
+import {GaragePage} from "../../src/pageObjects/garagePage/GaragePage.ts";
+import {Users} from "../../src/data/Users.ts";
 
 let welcomePage
 

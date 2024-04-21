@@ -1,5 +1,5 @@
-import {expect, test} from "../src/fixtures/GarageFixtures.js"
-import {Cars} from "../src/data/Cars.js";
+import {expect, test} from "../../src/fixtures/GarageFixtures.js"
+import {Cars} from "../../src/data/Cars.ts";
 
 test.describe('Add car test', () => {
     test('Add BMW X5', async ({userGaragePage}) => {
