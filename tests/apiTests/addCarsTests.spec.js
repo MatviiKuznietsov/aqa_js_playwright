@@ -1,8 +1,10 @@
 import {expect, test} from "@playwright/test";
 import {Users} from "../../src/data/Users.js";
-import {BRANDS} from "../../src/data/Brands.ts";
-import {MODELS} from "../../src/data/Models.ts";
-import {HttpStatus} from "../../src/data/HttpStatus.js";
+import {Brands} from "../../src/data/brands.ts";
+import {MODELS} from "../../src/data/models.ts";
+import {HttpStatus} from "../../src/data/httpStatus.ts";
+import {CarsControllers} from "../../src/controllers/CarsControllers.js";
+import {getExpectedCreateBody, getRequestBody} from "../../src/fixtures/carApiFixtures.js";
 
 const CREATE_CAR_END_POINT = "/api/cars"
 const SIGN_IN_END_POINT = "/api/auth/signin"
@@ -35,7 +37,7 @@ test.describe("Cars API-> Create Cars", () => {
         }
     })
 
-    for (const brand of Object.values(BRANDS)) {
+    for (const brand of Object.values(Brands)) {
         for (const model of Object.values(MODELS[brand.id])) {
             test(`Create car with brand "${brand.title}" and model ${model.title}`, async ({request}) => {
                 const requestBodyCreateCar = {
@@ -66,6 +68,21 @@ test.describe("Cars API-> Create Cars", () => {
             })
         }
     }
+    for (const brand of Object.values(Brands)) {
+        for (const model of Object.values(MODELS[brand.id])) {
+            test(`Create car with brand "${brand.title}" and model ${model.title} compact`, async ({request}) => {
+                const carCtrl = new CarsControllers(request)
+                const requestBodyCreateCar = getRequestBody(brand.id, model.id, Math.floor(Math.random() * 100))
+                const responseCreateCar = await carCtrl.createNewCar(requestBodyCreateCar)
+                const bodyCreateCar = await responseCreateCar.json()
+                const expectedCreateCarBody = getExpectedCreateBody(brand, model, requestBodyCreateCar.mileage)
+                expect(bodyCreateCar.status).toBe('ok')
+                expect(responseCreateCar.status()).toBe(HttpStatus.HTTP_CREATED)
+                expect(bodyCreateCar.data).toEqual(expectedCreateCarBody)
+                CAR_ID = bodyCreateCar.data.id
+            })
+        }
+    }
 })
 test.describe('Invalid tests for creation cars', () => {
     test.beforeEach("SignIn", async ({request}) => {
@@ -82,7 +99,7 @@ test.describe('Invalid tests for creation cars', () => {
     })
     test("Invalid mileage over 999999", async ({request}) => {
         const requestBodyCreateCar = {
-            'carBrandId': BRANDS.Audu.id,
+            'carBrandId': Brands.Audu.id,
             'carModelId': MODELS["1"].A6.id,
             'mileage': MILEAGE_OVER_MAX
         }
@@ -99,7 +116,7 @@ test.describe('Invalid tests for creation cars', () => {
     })
     test("Invalid mileage less than 0", async ({request}) => {
         const requestBodyCreateCar = {
-            'carBrandId': BRANDS.Audu.id,
+            'carBrandId': Brands.Audu.id,
             'carModelId': MODELS["1"].A6.id,
             'mileage': MILEAGE_LESS_MIN
         }
@@ -116,7 +133,7 @@ test.describe('Invalid tests for creation cars', () => {
     })
     test("Invalid type value mileage", async ({request}) => {
         const requestBodyCreateCar = {
-            'carBrandId': BRANDS.Audu.id,
+            'carBrandId': Brands.Audu.id,
             'carModelId': MODELS["1"].A6.id,
             'mileage': INVALID_MILEAGE_VALUE
         }
@@ -150,7 +167,7 @@ test.describe('Invalid tests for creation cars', () => {
     })
     test("Not exist model", async ({request}) => {
         const requestBodyCreateCar = {
-            'carBrandId': BRANDS.Audu.id,
+            'carBrandId': Brands.Audu.id,
             'carModelId': NON_EXIST_MODEL,
             'mileage': DEFAULT_MILIAGE
         }
@@ -170,7 +187,7 @@ test.describe('Invalid tests for creation cars', () => {
 test.describe('Create car', () => {
     test('Create car without authorization', async ({request}) => {
         const requestBodyCreateCar = {
-            'carBrandId': BRANDS.Audu.id,
+            'carBrandId': Brands.Audu.id,
             'carModelId': MODELS["1"].A6.id,
             'mileage': DEFAULT_MILIAGE
         }

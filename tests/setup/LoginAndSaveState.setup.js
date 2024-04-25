@@ -1,5 +1,5 @@
 import {test as setup} from "@playwright/test";
-import {expect} from "../../src/fixtures/GarageFixtures.js"
+import {expect} from "../../src/fixtures/garageFixtures.js"
 import {WelcomePage} from "../../src/pageObjects/welcomePage/WelcomePage.js";
 import {USER_TOM_STORAGE_STATE_PATH} from "../../src/constants.js";
 import {Users} from "../../src/data/Users.js";

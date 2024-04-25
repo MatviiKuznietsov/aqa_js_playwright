@@ -1,29 +1,29 @@
 import {expect, test} from "@playwright/test";
 import {AuthControllers} from "../../src/controllers/AuthControllers.js";
-import {HttpStatus} from "../../src/data/HttpStatus.js";
+import {HttpStatus} from "../../src/data/httpStatus.ts";
 import {CarsControllers} from "../../src/controllers/CarsControllers.js";
 import {Users} from "../../src/data/Users.js";
 import {
-    BRAND_CAR,
     DEFAULT_CAR,
     DEFAULT_CAR_INVALID,
-    DEFAULT_CAR_RESPONSE,
     DEFAULT_CAR_WITH_CHANGES,
     DEFAULT_CAR_WITH_CHANGES_RESPONSE,
     EMPTY_LIST_CARS,
     expectedCarBody,
-    getBrandByID,
-    getModelByID, getResponceDeletedCar,
-    MODEL_CAR
-} from "../../src/fixtures/CarApiFixtures.js";
+    getExpectedCreateBody,
+    getRequestBody,
+} from "../../src/fixtures/carApiFixtures.js";
 import {
     AUTH_ERROR,
     BAD_REQUEST_BRAND,
     CAR_NOT_FOUND,
     NOT_FOUND_BRANDS_WITH_ID
-} from "../../src/fixtures/CarApiErrorMsgFxitures.js";
-import {getUser} from "../../src/fixtures/UsersFixtures.js";
-import moment from "moment/moment.js";
+} from "../../src/fixtures/carApiErrorMsgFxitures.js";
+import {getUser} from "../../src/fixtures/usersFixtures.js";
+import {BRAND_CAR} from "../../src/fixtures/brandCarFixtures.js";
+import {MODEL_CAR} from "../../src/fixtures/modelCarFixtures.js";
+import {Brands} from "../../src/data/brands.js";
+import {MODELS} from "../../src/data/models.js";
 
 let carCtrl;
 let authCtrl
@@ -54,7 +54,14 @@ test.describe("Cars tests", () => {
         test("Get car brand by id test", async () => {
             const response = await carCtrl.getCarBrandsById(BRAND_CAR.data[0].id)
             await expect(response).toBeOK()
-            expect(await response.json()).toEqual(getBrandByID(BRAND_CAR.data[0].id))
+            expect(await response.json()).toMatchObject({
+                "status": "ok",
+                "data": {
+                    "id": BRAND_CAR.data[0].id,
+                    "title": "Audi",
+                    "logoFilename": "audi.png"
+                }
+            });
         })
         test("Get car brand by invalid id test", async () => {
             const response = await carCtrl.getCarBrandsById(INVALID_BRAND_ID)
@@ -73,7 +80,14 @@ test.describe("Cars tests", () => {
         test("Get car model by id test", async () => {
             const response = await carCtrl.getModelsById(MODEL_CAR.data[0].id)
             await expect(response).toBeOK()
-            expect(await response.json()).toEqual(getModelByID(MODEL_CAR.data[0].id))
+            expect(await response.json()).toMatchObject({
+                "status": "ok",
+                "data": {
+                    "id": MODEL_CAR.data[0].id,
+                    "carBrandId": MODEL_CAR.data[0].id,
+                    "title": "TT"
+                }
+            })
         })
         test("Get car model by invalid id test", async () => {
             const response = await carCtrl.getCarBrandsById(INVALID_MODEL_ID)
@@ -99,14 +113,21 @@ test.describe("Cars tests", () => {
         })
     })
     test.describe('Create car tests', () => {
-        test("Create new car test", async () => {
-            const response = await carCtrl.createNewCar(DEFAULT_CAR)
-            const carBody = await expectedCarBody(response)
-            CAR_ID = (await response.json()).data.id
-            expect(response.status()).toBe(HttpStatus.HTTP_CREATED)
-            expect(carBody).toEqual(DEFAULT_CAR_RESPONSE)
-            expect(moment((await response.json()).data.carCreatedAt).isBefore(new Date())).toBe(true)
-        })
+        for (const brand of Object.values(Brands)) {
+            for (const model of Object.values(MODELS[brand.id])) {
+                test(`Create car with brand "${brand.title}" and model ${model.title} compact`, async ({request}) => {
+                    const carCtrl = new CarsControllers(request)
+                    const requestBodyCreateCar = getRequestBody(brand.id, model.id, Math.floor(Math.random() * 100))
+                    const responseCreateCar = await carCtrl.createNewCar(requestBodyCreateCar)
+                    const bodyCreateCar = await responseCreateCar.json()
+                    const expectedCreateCarBody = getExpectedCreateBody(brand, model, requestBodyCreateCar.mileage)
+                    expect(bodyCreateCar.status).toBe('ok')
+                    expect(responseCreateCar.status()).toBe(HttpStatus.HTTP_CREATED)
+                    expect(bodyCreateCar.data).toEqual(expectedCreateCarBody)
+                    CAR_ID = bodyCreateCar.data.id
+                })
+            }
+        }
         test("Create new car with invalid data test", async () => {
             const response = await carCtrl.createNewCar(DEFAULT_CAR_INVALID)
             expect(response.status()).toBe(HttpStatus.HTTP_NOT_FOUND)
@@ -153,7 +174,13 @@ test.describe("Cars tests", () => {
 
             const responseDel = await carCtrl.deleteCar((await responseCreateCar.json()).data.id)
             expect(responseDel.status()).toBe(HttpStatus.HTTP_OK)
-            expect((await responseDel.json())).toEqual(getResponceDeletedCar((await responseCreateCar.json()).data.id))
+            expect(await responseDel.json()).toMatchObject({
+                "status": "ok",
+                "data": {
+                    "carId": (await responseCreateCar.json()).data.id
+                }
+            })
+
 
             const response = await carCtrl.getCurrentUserCar()
             await expect(response).toBeOK()

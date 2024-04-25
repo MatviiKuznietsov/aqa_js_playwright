@@ -1,4 +1,4 @@
-import {EndPoints} from "../data/EndPoints";
+import {EndPoints} from "../data/endPoints";
 import {APIRequestContext, APIResponse} from "@playwright/test";
 import {BaseController} from "./BaseController";
 

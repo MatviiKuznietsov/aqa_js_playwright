@@ -1,4 +1,4 @@
-import {expect, test} from "../../src/fixtures/GarageFixtures.js"
+import {expect, test} from "../../src/fixtures/garageFixtures.js"
 import {Cars} from "../../src/data/Cars.ts";
 
 test.describe('Add car test', () => {

@@ -1,6 +1,6 @@
 import {BaseController} from "./BaseController";
 import {APIRequestContext, request} from "@playwright/test";
-import {EndPoints} from "../data/EndPoints";
+import {EndPoints} from "../data/endPoints";
 
 export class AuthControllers extends BaseController {
     constructor(request: APIRequestContext) {

@@ -1,4 +1,4 @@
-export const BRANDS = {
+export const Brands = {
     Audu: {
         "id": 1,
         "title": "Audi",
