@@ -1,5 +1,5 @@
-import {expect, test} from "../../src/fixtures/GarageFixtures.js"
-import {USER_MOCK_TITLES} from "../../src/fixtures/UserTitles.js";
+import {expect, test} from "../../src/fixtures/garageFixtures.js"
+import {USER_MOCK_TITLES} from "../../src/fixtures/userTitles.js";
 
 
 test.describe("Garage Net tests", () => {
