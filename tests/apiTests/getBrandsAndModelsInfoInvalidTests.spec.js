@@ -3,20 +3,16 @@ import {CarsControllers} from "../../src/controllers/CarsControllers.js";
 import {AuthControllers} from "../../src/controllers/AuthControllers.js";
 import {getUser} from "../../src/fixtures/usersFixtures.js";
 import {Users} from "../../src/data/Users.js";
-import {
-    DEFAULT_CAR,
-    DEFAULT_CAR_WITH_CHANGES,
-    DEFAULT_CAR_WITH_CHANGES_RESPONSE,
-    expectedCarBody
-} from "../../src/fixtures/carApiFixtures.js";
 import {HttpStatus} from "../../src/data/httpStatus.js";
+import {NOT_FOUND_BRANDS_WITH_ID} from "../../src/fixtures/carApiErrorMsgFxitures.js";
 
 let carCtrl;
 let authCtrl
-
 let carId;
 
-test.describe("Edit Cars tests", () => {
+const INVALID_BRAND_ID = 5555
+const INVALID_MODEL_ID = 6666
+test.describe("Create cars tests", () => {
     test.beforeEach("Preparation log in", async ({request}) => {
         carCtrl = new CarsControllers(request);
         authCtrl = new AuthControllers(request);
@@ -28,14 +24,18 @@ test.describe("Edit Cars tests", () => {
         await carCtrl.deleteCar(carId);
     })
 
-    test("Edit car test", async () => {
-        const responseCreateCar = await carCtrl.createNewCar(DEFAULT_CAR)
-        expect(responseCreateCar.status()).toBe(HttpStatus.HTTP_CREATED)
-        carId = (await responseCreateCar.json()).data.id
-        const responseEditCar = await carCtrl.editExistingCar((await responseCreateCar.json()).data.id, DEFAULT_CAR_WITH_CHANGES)
-        const carEditBody = await expectedCarBody(responseEditCar)
-        expect(responseEditCar.status()).toBe(HttpStatus.HTTP_OK)
-        expect(carEditBody).toEqual(DEFAULT_CAR_WITH_CHANGES_RESPONSE)
+    test("Get car brand by invalid id test", async () => {
+        const response = await carCtrl.getCarBrandsById(INVALID_BRAND_ID)
+        const body = await response.json()
+        expect(response.status()).toBe(HttpStatus.HTTP_NOT_FOUND)
+        expect(body).toEqual(NOT_FOUND_BRANDS_WITH_ID)
     })
-
 })
+
+test("Get car model by invalid id test", async () => {
+    const response = await carCtrl.getCarBrandsById(INVALID_MODEL_ID)
+    const body = await response.json()
+    expect(response.status()).toBe(HttpStatus.HTTP_NOT_FOUND)
+    expect(body).toEqual(NOT_FOUND_BRANDS_WITH_ID)
+})
+

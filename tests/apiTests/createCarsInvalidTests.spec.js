@@ -3,20 +3,14 @@ import {CarsControllers} from "../../src/controllers/CarsControllers.js";
 import {AuthControllers} from "../../src/controllers/AuthControllers.js";
 import {getUser} from "../../src/fixtures/usersFixtures.js";
 import {Users} from "../../src/data/Users.js";
-import {
-    DEFAULT_CAR,
-    DEFAULT_CAR_WITH_CHANGES,
-    DEFAULT_CAR_WITH_CHANGES_RESPONSE,
-    expectedCarBody
-} from "../../src/fixtures/carApiFixtures.js";
+import {DEFAULT_CAR_INVALID} from "../../src/fixtures/carApiFixtures.js";
 import {HttpStatus} from "../../src/data/httpStatus.js";
+import {BAD_REQUEST_BRAND} from "../../src/fixtures/carApiErrorMsgFxitures.js";
 
 let carCtrl;
 let authCtrl
-
 let carId;
-
-test.describe("Edit Cars tests", () => {
+test.describe("Create cars tests", () => {
     test.beforeEach("Preparation log in", async ({request}) => {
         carCtrl = new CarsControllers(request);
         authCtrl = new AuthControllers(request);
@@ -28,14 +22,11 @@ test.describe("Edit Cars tests", () => {
         await carCtrl.deleteCar(carId);
     })
 
-    test("Edit car test", async () => {
-        const responseCreateCar = await carCtrl.createNewCar(DEFAULT_CAR)
-        expect(responseCreateCar.status()).toBe(HttpStatus.HTTP_CREATED)
-        carId = (await responseCreateCar.json()).data.id
-        const responseEditCar = await carCtrl.editExistingCar((await responseCreateCar.json()).data.id, DEFAULT_CAR_WITH_CHANGES)
-        const carEditBody = await expectedCarBody(responseEditCar)
-        expect(responseEditCar.status()).toBe(HttpStatus.HTTP_OK)
-        expect(carEditBody).toEqual(DEFAULT_CAR_WITH_CHANGES_RESPONSE)
+    test("Create new car with invalid data test", async () => {
+        const response = await carCtrl.createNewCar(DEFAULT_CAR_INVALID)
+        const body = await response.json()
+        expect(response.status()).toBe(HttpStatus.HTTP_NOT_FOUND)
+        expect(body).toEqual(BAD_REQUEST_BRAND)
     })
 
 })

@@ -7,10 +7,10 @@ export class AuthControllers extends BaseController {
         super(request);
     }
 
-    async SigInUser(requestBody: {}) : Promise<any>{
+    async sigInUser(requestBody: {}) : Promise<any>{
        return  await this.request.post(EndPoints.SIGN_IN_END_POINT, {data: requestBody})
     }
-    async LogOutUser() : Promise<any>{
+    async logOutUser() : Promise<any>{
         return  await this.request.get(EndPoints.LOG_OUT_END_POINT)
     }
 }
