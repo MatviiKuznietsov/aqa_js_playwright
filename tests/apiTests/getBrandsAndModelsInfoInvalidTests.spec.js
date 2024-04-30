@@ -16,7 +16,7 @@ test.describe("Create cars tests", () => {
     test.beforeEach("Preparation log in", async ({request}) => {
         carCtrl = new CarsControllers(request);
         authCtrl = new AuthControllers(request);
-        const bodySignIn = await (await authCtrl.sigInUser(getUser(Users.userTom.email, Users.userTom.password))).json()
+        const bodySignIn = await (await authCtrl.sigInUser(getUser(Users.userBen.email, Users.userBen.password))).json()
         expect(bodySignIn.status).toBe('ok')
     })
 
@@ -30,12 +30,13 @@ test.describe("Create cars tests", () => {
         expect(response.status()).toBe(HttpStatus.HTTP_NOT_FOUND)
         expect(body).toEqual(NOT_FOUND_BRANDS_WITH_ID)
     })
+    test("Get car model by invalid id test", async () => {
+        const response = await carCtrl.getCarBrandsById(INVALID_MODEL_ID)
+        const body = await response.json()
+        expect(response.status()).toBe(HttpStatus.HTTP_NOT_FOUND)
+        expect(body).toEqual(NOT_FOUND_BRANDS_WITH_ID)
+    })
 })
 
-test("Get car model by invalid id test", async () => {
-    const response = await carCtrl.getCarBrandsById(INVALID_MODEL_ID)
-    const body = await response.json()
-    expect(response.status()).toBe(HttpStatus.HTTP_NOT_FOUND)
-    expect(body).toEqual(NOT_FOUND_BRANDS_WITH_ID)
-})
+
 

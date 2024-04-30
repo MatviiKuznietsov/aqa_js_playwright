@@ -20,8 +20,8 @@ const INVALID_MILEAGE_VALUE = 'HELLO';
 test.describe("Cars API-> Create Cars", () => {
     test.beforeEach("SignIn", async ({request}) => {
         const requestBodySignIn = {
-            "email": Users.userTom.email,
-            "password": Users.userTom.password,
+            "email": Users.userBen.email,
+            "password": Users.userBen.password,
             "remember": false
         }
         const responseSignIn = await request.post(SIGN_IN_END_POINT, {
@@ -30,6 +30,7 @@ test.describe("Cars API-> Create Cars", () => {
         const bodySignIn = await responseSignIn.json()
         expect(bodySignIn.status).toBe('ok')
     })
+
     test.afterEach("Delete car", async ({request}) => {
         if (CAR_ID) {
             const responseDeleteCar = await request.delete(DELETE_CAR_END_POINT + CAR_ID)
@@ -37,37 +38,8 @@ test.describe("Cars API-> Create Cars", () => {
         }
     })
 
-    for (const brand of Object.values(Brands)) {
-        for (const model of Object.values(MODELS[brand.id])) {
-            test(`Create car with brand "${brand.title}" and model ${model.title}`, async ({request}) => {
-                const requestBodyCreateCar = {
-                    'carBrandId': brand.id,
-                    'carModelId': model.id,
-                    'mileage': Math.floor(Math.random() * 100)
-                }
-                const responseCreateCar = await request.post(CREATE_CAR_END_POINT, {
-                    data: requestBodyCreateCar
-                })
-                const bodyCreateCar = await responseCreateCar.json()
-                const expectedCreateCarBody = {
-                    "id": expect.any(Number),
-                    "carBrandId": brand.id,
-                    "carModelId": model.id,
-                    "initialMileage": requestBodyCreateCar.mileage,
-                    "updatedMileageAt": expect.any(String),
-                    "carCreatedAt": expect.any(String),
-                    "mileage": requestBodyCreateCar.mileage,
-                    "brand": brand.title,
-                    "model": model.title,
-                    "logo": `${brand.title.toLowerCase()}.png`
-                }
-                expect(bodyCreateCar.status).toBe('ok')
-                expect(responseCreateCar.status()).toBe(HttpStatus.HTTP_CREATED)
-                expect(bodyCreateCar.data).toEqual(expectedCreateCarBody)
-                CAR_ID = bodyCreateCar.data.id
-            })
-        }
-    }
+
+
     for (const brand of Object.values(Brands)) {
         for (const model of Object.values(MODELS[brand.id])) {
             test(`Create car with brand "${brand.title}" and model ${model.title} compact`, async ({request}) => {
@@ -76,6 +48,7 @@ test.describe("Cars API-> Create Cars", () => {
                 const responseCreateCar = await carCtrl.createNewCar(requestBodyCreateCar)
                 const bodyCreateCar = await responseCreateCar.json()
                 const expectedCreateCarBody = getExpectedCreateBody(brand, model, requestBodyCreateCar.mileage)
+
                 expect(bodyCreateCar.status).toBe('ok')
                 expect(responseCreateCar.status()).toBe(HttpStatus.HTTP_CREATED)
                 expect(bodyCreateCar.data).toEqual(expectedCreateCarBody)
@@ -97,6 +70,7 @@ test.describe('Invalid tests for creation cars', () => {
         const bodySignIn = await responseSignIn.json()
         expect(bodySignIn.status).toBe('ok')
     })
+
     test("Invalid mileage over 999999", async ({request}) => {
         const requestBodyCreateCar = {
             'carBrandId': Brands.Audu.id,
@@ -114,6 +88,7 @@ test.describe('Invalid tests for creation cars', () => {
         expect(responseCreateCar.status()).toBe(HttpStatus.HTTP_BAD_REQUEST)
         expect(bodyCreateCar).toEqual(expectedCreateCarBody)
     })
+
     test("Invalid mileage less than 0", async ({request}) => {
         const requestBodyCreateCar = {
             'carBrandId': Brands.Audu.id,
@@ -131,6 +106,7 @@ test.describe('Invalid tests for creation cars', () => {
         expect(responseCreateCar.status()).toBe(HttpStatus.HTTP_BAD_REQUEST)
         expect(bodyCreateCar).toEqual(expectedCreateCarBody)
     })
+
     test("Invalid type value mileage", async ({request}) => {
         const requestBodyCreateCar = {
             'carBrandId': Brands.Audu.id,
@@ -148,6 +124,7 @@ test.describe('Invalid tests for creation cars', () => {
         expect(responseCreateCar.status()).toBe(HttpStatus.HTTP_BAD_REQUEST)
         expect(bodyCreateCar).toEqual(expectedCreateCarBody)
     })
+
     test("Not exist brand", async ({request}) => {
         const requestBodyCreateCar = {
             'carBrandId': NON_EXIST_BRAND,
@@ -165,6 +142,7 @@ test.describe('Invalid tests for creation cars', () => {
         expect(responseCreateCar.status()).toBe(HttpStatus.HTTP_NOT_FOUND)
         expect(bodyCreateCar).toEqual(expectedCreateCarBody)
     })
+
     test("Not exist model", async ({request}) => {
         const requestBodyCreateCar = {
             'carBrandId': Brands.Audu.id,
@@ -185,6 +163,7 @@ test.describe('Invalid tests for creation cars', () => {
 })
 
 test.describe('Create car', () => {
+
     test('Create car without authorization', async ({request}) => {
         const requestBodyCreateCar = {
             'carBrandId': Brands.Audu.id,
