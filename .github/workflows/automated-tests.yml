@@ -3,7 +3,7 @@ name: "U: Automated API and E2E tests (Playwright)"
 on: push
 
 jobs:
-  e2e-tests:
+  tests:
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/playwright:v1.42.1-jammy
     steps:
@@ -27,7 +27,7 @@ jobs:
           API_URL: 'https://api.qauto.forstudy.space/'
           HTTP_CREDENTIALS_USERNAME: ${{secrets.HTTP_CREDENTIALS_USERNAME}}
           HTTP_CREDENTIALS_PASSWORD: ${{secrets.HTTP_CREDENTIALS_PASSWORD}}
-        run: npm run test:e2e
+        run: npm run test:all
       - name: "Upload report to artifacts"
         if: failure()
         uses: actions/upload-artifact@v4

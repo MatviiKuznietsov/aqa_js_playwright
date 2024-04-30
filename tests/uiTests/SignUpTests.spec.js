@@ -101,7 +101,7 @@ test.describe('Negative sign up tests', () => {
         await expect(welcomePage.signUpPopUp.inputReEnterPassword).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })
     test("Check validation if password and rename password no match", async () => {
-        await (await welcomePage.openSignUpPopUp()).fillFieldPassAndRepeatPass(user.password, user.password + '1')
+        await (await welcomePage.openSignUpPopUp()).fillFieldPassAndRepeatPass(Users.userJou.password, Users.userJou.password + '1')
         await expect(welcomePage.signUpPopUp.reenterPasswordInputErrorMessage).toContainText(RegistrationFormValidationMessages.MSG_PASS_NOT_MATCH)
         await expect(welcomePage.signUpPopUp.inputReEnterPassword).toHaveCSS(CSS_PROPERTY_BORDER_COLOR, ERROR_COLOR)
     })

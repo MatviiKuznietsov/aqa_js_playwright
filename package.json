@@ -6,7 +6,9 @@
   "scripts": {
     "test:e2e": "npx playwright test --project='chromium UI tests'",
     "test:api": "npx playwright test --project=\"API tests\"",
-    "test:ui": "npx playwright test --ui --project=chromium"
+    "test:ui": "npx playwright test --project=\"UI tests\"",
+    "test:ui2": "npx playwright test --ui --project=chromium",
+    "test:all": "npx playwright test --project=\"All tests\""
   },
   "author": "",
   "license": "ISC",

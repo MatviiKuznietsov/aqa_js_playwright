@@ -15,7 +15,7 @@ test.describe("Delete cars tests", () => {
     test.beforeEach("Preparation log in", async ({request}) => {
         carCtrl = new CarsControllers(request);
         authCtrl = new AuthControllers(request);
-        const bodySignIn = await (await authCtrl.sigInUser(getUser(Users.userTom.email, Users.userTom.password))).json()
+        const bodySignIn = await (await authCtrl.sigInUser(getUser(Users.userBen.email, Users.userBen.password))).json()
         expect(bodySignIn.status).toBe('ok')
     })
 
@@ -27,6 +27,7 @@ test.describe("Delete cars tests", () => {
         const responseCreateCar = await carCtrl.createNewCar(DEFAULT_CAR)
         expect(responseCreateCar.status()).toBe(HttpStatus.HTTP_CREATED)
         const carResponse = (await responseCreateCar.json()).data
+
         const responseDel = await carCtrl.deleteCar(carResponse.id)
         const bodyDel = await responseDel.json()
         expect(responseDel.status()).toBe(HttpStatus.HTTP_OK)
